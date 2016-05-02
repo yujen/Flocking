@@ -19,12 +19,18 @@ void AAgent::BeginPlay()
 	
 	
 	gameMode = (AFlockingGameMode*)(GetWorld()->GetAuthGameMode());
-
+	//wanderTarget = FVector(0.0f);
 
 	// Get the current location  
 	position = GetActorLocation();
 	velocity = GetActorForwardVector() * initVelocity;
-	UE_LOG(Flocking, Log, TEXT("velocity  %s"), *(velocity.ToString()));
+	
+
+
+	//FVector angle(0, -10, 0);
+	//FRotator rotation = FRotationMatrix::MakeFromX(angle).Rotator();
+	//UE_LOG(Flocking, Log, TEXT("rotation  %f"), (rotation.Yaw));
+	
 }
 
 // Called every frame
@@ -33,24 +39,26 @@ void AAgent::Tick( float DeltaTime )
 	Super::Tick( DeltaTime );
 
 
-	acceleration = Alignment().GetClampedToMaxSize(gameMode->maxAcceleration);
-	velocity += acceleration * DeltaTime * 2000;
+	acceleration = Combine().GetClampedToMaxSize(gameMode->maxAcceleration);
+	velocity += acceleration * DeltaTime;
 	velocity = velocity.GetClampedToMaxSize(gameMode->maxVelocity);
 	position += velocity * DeltaTime;
+
+	WrapAroundPosition(position);
 
 	SetActorRelativeLocation(position, false);
 
 	//UE_LOG(Flocking, Log, TEXT("velocity  %s"), *(acceleration.ToString()));
 	if (velocity.Size() > 0)
 	{
-		SetActorRelativeRotation(FRotationMatrix::MakeFromX(velocity * DeltaTime).Rotator());
+		SetActorRelativeRotation(FRotationMatrix::MakeFromX(velocity).Rotator());
 	}
 
 }
 
 FVector AAgent::Cohesion()
 {
-	FVector r(0);
+	FVector r(0.0f);
 
 	TArray<AAgent*> listNeighbor = gameMode->GetNeighborAgents(this);
 	if (listNeighbor.Num() == 0)
@@ -58,11 +66,21 @@ FVector AAgent::Cohesion()
 		return r;
 	}
 
+	int count = 0;
 	for (AAgent* neighbor : listNeighbor)
 	{
-		r += neighbor->position;
+		if (IsInView(neighbor))
+		{
+			r += neighbor->position;
+			++count;
+		}
 	}
-	r /= listNeighbor.Num();
+	if (count == 0)
+	{
+		return r;
+	}
+
+	r /= count;
 	r -= this->position;
 
 	r.Normalize();
@@ -72,7 +90,7 @@ FVector AAgent::Cohesion()
 
 FVector AAgent::Separation()
 {
-	FVector r(0);
+	FVector r(0.0f);
 
 	TArray<AAgent*> listNeighbor = gameMode->GetNeighborAgents(this);
 	if (listNeighbor.Num() == 0)
@@ -82,12 +100,15 @@ FVector AAgent::Separation()
 
 	for (AAgent* neighbor : listNeighbor)
 	{
-		FVector toward = this->position - neighbor->position;
-		float magnitude = toward.Size();
-		if (magnitude > 0)
+		if (IsInView(neighbor))
 		{
-			toward.Normalize();
-			r += toward / magnitude;
+			FVector toward = this->position - neighbor->position;
+			float magnitude = toward.Size();
+			if (magnitude > 0)
+			{
+				toward.Normalize();
+				r += toward / magnitude;
+			}
 		}
 	}
 
@@ -99,7 +120,7 @@ FVector AAgent::Separation()
 
 FVector AAgent::Alignment()
 {
-	FVector r(0);
+	FVector r(0.0f);
 
 	TArray<AAgent*> listNeighbor = gameMode->GetNeighborAgents(this);
 	if (listNeighbor.Num() == 0)
@@ -109,7 +130,10 @@ FVector AAgent::Alignment()
 
 	for (AAgent* neighbor : listNeighbor)
 	{
-		r += neighbor->velocity;
+		if (IsInView(neighbor))
+		{
+			r += neighbor->velocity;
+		}
 	}
 
 	r.Normalize();
@@ -120,6 +144,51 @@ FVector AAgent::Alignment()
 
 FVector AAgent::Combine()
 {
+	return Cohesion() * gameMode->kCohesion + Separation() * gameMode->kSeparation + Alignment() * gameMode->kAlignment;
+}
+
+void AAgent::WrapAroundPosition(FVector& pos)
+{
+	FVector2D mapSize = gameMode->mapSize;
+	pos.X = WrapAround(pos.X, mapSize.X, mapSize.Y);
+	pos.Y = WrapAround(pos.Y, mapSize.X, mapSize.Y);
+}
+
+float AAgent::WrapAround(float value, float min, float max)
+{
+	if (value > max)
+	{
+		value = min;
+	}
+	else if (value < min)
+	{
+		value = max;
+	}
+
+	return value;
+}
+
+bool AAgent::IsInView(const AAgent* otherAgent)
+{
+	FVector tmp = (otherAgent->position - this->position); tmp.Normalize();
+	float angle = acosf(FVector::DotProduct(tmp, GetActorForwardVector()));
+	return (angle >= gameMode->agentViewAngle.X && angle <= gameMode->agentViewAngle.Y);
+}
+/*
+FVector AAgent::Wander(float DeltaTime)
+{
+	float jitter = gameMode->agnetJitter * DeltaTime;
+	wanderTarget += FVector(RandomBinomial() * jitter, RandomBinomial() * jitter, 0);
+	wanderTarget.Normalize();
+	wanderTarget *= gameMode->agnetWanderRadius;
+
+	FVector localTarget = wanderTarget + FVector(gameMode->agnetWanderDistance, 0, 0);
+
 	return FVector();
 }
 
+float AAgent::RandomBinomial()
+{
+	return FMath::FRandRange(0.0f, 1.0f) - FMath::FRandRange(0.0f, 1.0f);
+}
+*/

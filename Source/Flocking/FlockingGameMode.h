@@ -32,12 +32,30 @@ public:
 	UPROPERTY(EditAnywhere, Category = FlockingConfig)
 	int32 agentCount = 10;
 
+	UPROPERTY(EditAnywhere, Category = FlockingConfig)
+	FVector2D mapSize;
+
+
 
 	UPROPERTY(EditAnywhere, Category = FlockingConfig)
 	float maxVelocity = 0;
 
 	UPROPERTY(EditAnywhere, Category = FlockingConfig)
 	float maxAcceleration = 0;
+
+	UPROPERTY(EditAnywhere, Category = FlockingConfig)
+	FVector2D agentViewAngle;
+
+	//UPROPERTY(EditAnywhere, Category = FlockingConfig)
+	//float agnetJitter = 0;
+
+	//UPROPERTY(EditAnywhere, Category = FlockingConfig)
+	//float agnetWanderRadius = 0;
+
+	//UPROPERTY(EditAnywhere, Category = FlockingConfig)
+	//float agnetWanderDistance = 0;
+
+
 
 	UPROPERTY(EditAnywhere, Category = FlockingConfig)
 	float radiusCohesion = 0;
@@ -49,13 +67,13 @@ public:
 	float radiusAlignment = 0;
 
 	UPROPERTY(EditAnywhere, Category = FlockingConfig)
-	float Kc = 0;
+	float kCohesion = 0;
 
 	UPROPERTY(EditAnywhere, Category = FlockingConfig)
-	float Ks = 0;
+	float kSeparation = 0;
 
 	UPROPERTY(EditAnywhere, Category = FlockingConfig)
-	float Ka = 0;
+	float kAlignment = 0;
 	
 
 	UPROPERTY(EditAnywhere, Category = FlockingConfig)

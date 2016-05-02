@@ -44,8 +44,9 @@ public:
 	UPROPERTY(EditAnywhere, Category = Flocking)
 	FVector acceleration;
 
-	//UPROPERTY(VisibleAnywhere, Category = Flocking)
 	AFlockingGameMode* gameMode;
+
+	FVector wanderTarget = FVector(0.0f);
 
 
 	FVector Cohesion();
@@ -55,5 +56,16 @@ public:
 	FVector Alignment();
 
 	FVector Combine();
+
+	void WrapAroundPosition(FVector& pos);
+
+	float WrapAround(float value, float min, float max);
+	
+	bool IsInView(const AAgent* otherAgent);
+
+	FVector Wander(float DeltaTime);
+
+	float RandomBinomial();
+	
 
 };
