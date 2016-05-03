@@ -14,7 +14,7 @@ void AFlockingGameMode::InitGameState()
 
 	for (int i = 0; i < agentCount; i++)
 	{
-		FVector randomPos(FMath::RandRange(-5000, 5000), FMath::RandRange(-5000, 5000), 0);
+		FVector randomPos(FMath::RandRange(-mapSize.X, mapSize.X), FMath::RandRange(-mapSize.Y, mapSize.Y), 0);
 		FRotator randRotator(0, FMath::RandRange(0, 360), 0);
 		listAgent.Add((AAgent*)GetWorld()->SpawnActor(agent_BP, &randomPos, &randRotator));
 	}

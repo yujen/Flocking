@@ -19,17 +19,10 @@ void AAgent::BeginPlay()
 	
 	
 	gameMode = (AFlockingGameMode*)(GetWorld()->GetAuthGameMode());
-	//wanderTarget = FVector(0.0f);
 
 	// Get the current location  
 	position = GetActorLocation();
 	velocity = GetActorForwardVector() * initVelocity;
-	
-
-
-	//FVector angle(0, -10, 0);
-	//FRotator rotation = FRotationMatrix::MakeFromX(angle).Rotator();
-	//UE_LOG(Flocking, Log, TEXT("rotation  %f"), (rotation.Yaw));
 	
 }
 
@@ -150,8 +143,8 @@ FVector AAgent::Combine()
 void AAgent::WrapAroundPosition(FVector& pos)
 {
 	FVector2D mapSize = gameMode->mapSize;
-	pos.X = WrapAround(pos.X, mapSize.X, mapSize.Y);
-	pos.Y = WrapAround(pos.Y, mapSize.X, mapSize.Y);
+	pos.X = WrapAround(pos.X, -mapSize.X, mapSize.X);
+	pos.Y = WrapAround(pos.Y, -mapSize.Y, mapSize.Y);
 }
 
 float AAgent::WrapAround(float value, float min, float max)
