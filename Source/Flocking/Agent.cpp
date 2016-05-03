@@ -163,7 +163,13 @@ float AAgent::WrapAround(float value, float min, float max)
 
 bool AAgent::IsInView(const AAgent* otherAgent)
 {
-	FVector tmp = (otherAgent->position - this->position); tmp.Normalize();
+	if (gameMode->enableAgentViewAngle == false)
+	{
+		return true;
+	}
+
+	FVector tmp = (otherAgent->position - this->position);
+	tmp.Normalize();
 	float angle = acosf(FVector::DotProduct(tmp, GetActorForwardVector()));
 	return (angle >= gameMode->agentViewAngle.X && angle <= gameMode->agentViewAngle.Y);
 }

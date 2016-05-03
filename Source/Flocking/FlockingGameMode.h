@@ -44,6 +44,9 @@ public:
 	float maxAcceleration = 0;
 
 	UPROPERTY(EditAnywhere, Category = FlockingConfig)
+	bool enableAgentViewAngle = false;
+
+	UPROPERTY(EditAnywhere, Category = FlockingConfig)
 	FVector2D agentViewAngle;
 
 	//UPROPERTY(EditAnywhere, Category = FlockingConfig)
