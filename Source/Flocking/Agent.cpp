@@ -53,7 +53,7 @@ FVector AAgent::Cohesion()
 {
 	FVector r(0.0f);
 
-	TArray<AAgent*> listNeighbor = gameMode->GetNeighborAgents(this);
+	TArray<AAgent*> listNeighbor = gameMode->GetNeighborAgents(this, gameMode->radiusCohesion);
 	if (listNeighbor.Num() == 0)
 	{
 		return r;
@@ -85,7 +85,7 @@ FVector AAgent::Separation()
 {
 	FVector r(0.0f);
 
-	TArray<AAgent*> listNeighbor = gameMode->GetNeighborAgents(this);
+	TArray<AAgent*> listNeighbor = gameMode->GetNeighborAgents(this, gameMode->radiusSeparation);
 	if (listNeighbor.Num() == 0)
 	{
 		return r;
@@ -115,7 +115,7 @@ FVector AAgent::Alignment()
 {
 	FVector r(0.0f);
 
-	TArray<AAgent*> listNeighbor = gameMode->GetNeighborAgents(this);
+	TArray<AAgent*> listNeighbor = gameMode->GetNeighborAgents(this, gameMode->radiusAlignment);
 	if (listNeighbor.Num() == 0)
 	{
 		return r;

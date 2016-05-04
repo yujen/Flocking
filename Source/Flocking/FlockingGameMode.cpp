@@ -22,7 +22,7 @@ void AFlockingGameMode::InitGameState()
 	
 }
 
-TArray<AAgent*> AFlockingGameMode::GetNeighborAgents(const AAgent* agent)
+TArray<AAgent*> AFlockingGameMode::GetNeighborAgents(const AAgent* agent, float radius)
 {
 	TArray<AAgent*> list;
 	for (AAgent* otherAgent : listAgent)
@@ -32,7 +32,7 @@ TArray<AAgent*> AFlockingGameMode::GetNeighborAgents(const AAgent* agent)
 			continue;
 		}
 
-		if (FVector::Dist(otherAgent->position, agent->position) <= radiusCohesion)
+		if (FVector::Dist(otherAgent->position, agent->position) < radius)
 		{
 			list.Add(otherAgent);
 		}

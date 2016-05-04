@@ -25,7 +25,7 @@ public:
 	virtual void InitGameState() override;
 
 
-	TArray<AAgent*> GetNeighborAgents(const AAgent* agent);
+	TArray<AAgent*> GetNeighborAgents(const AAgent* agent, float radius);
 	
 
 
