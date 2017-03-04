@@ -3,6 +3,3 @@
 #include "Flocking.h"
 
 IMPLEMENT_PRIMARY_GAME_MODULE( FDefaultGameModuleImpl, Flocking, "Flocking" );
-
-
-DEFINE_LOG_CATEGORY(Flocking);
